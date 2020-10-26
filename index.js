@@ -98,3 +98,4 @@ document.addEventListener('keydown', (e) => {
         flappyBoobs.jump();
     }
 })
+
