@@ -1,5 +1,6 @@
 const myGameArea = {
     canvas: document.createElement('canvas'),
+    frames: 0,
     start: function () {
         this.canvas.width = 600;
         this.canvas.height = 350;
@@ -81,9 +82,14 @@ const flappyBoobs = new Player(20, myGameArea.canvas.height, "red", 20, -20);
 const flappyObstacle = new Component(200, myGameArea.canvas.height, "black", 20, -20);
 flappyObstacle.speedX -= 1;
 
+const backgroundImg = document.createElement('img');
+backgroundImg.src = "./img/Lounge-background.png";
+
 function updateGameArea() {
     myGameArea.clear();
     myGameArea.context.strokeRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height); // Black borders
+    console.log(myGameArea.frames);
+    myGameArea.context.drawImage(backgroundImg, 0-myGameArea.frames, 0, 1000, 350);
     flappyBoobs.newPos();
     flappyBoobs.update();
     flappyBoobs.gravity(); // Simulate gravity to bring back the player after the jump
