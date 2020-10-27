@@ -38,7 +38,6 @@ class Component {
       const ctx = myGameArea.context;
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
-  
     }
   
     crashWith(obstacle) {
@@ -56,7 +55,15 @@ class Player extends Component {
     constructor(x, y, color, width, height) {
         super(x, y, color, width, height);
         this.jumps = 0;
+        this.img = document.createElement('img');
+        this.img.src = "./img/hands-color.png";
     }
+
+    update() {
+        const ctx = myGameArea.context;
+        ctx.fillStyle = this.color;
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      }
 
     jump() {
         if (this.jumps < 2) this.speedY = -5, this.jumps++;
@@ -99,19 +106,19 @@ const gameState = {
       {space: "garage",state: "public", fromX: 7000, toX: 8000},
       {space: "bedroom",state: "private", fromX: 8000, toX: 9000},
      ],
-    
+
   }
   
   function state (arr){
     for (let i = 0 ; i < arr.length; i++){
       if (arr[i].state === "private"){
         if (myGameArea.frames > arr[i].fromX && myGameArea.frames < arr[i].toX){
-         console.log('the room is private,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between' + arr[i].fromX + 'and' + arr[i].toX)
+         console.log('the room is private,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between ' + arr[i].fromX + ' and ' + arr[i].toX)
           //TODO IF IN PRIVATE --> WHEN HITTING OBSTACLE ---> SCORE +1
         }
       }else if (arr[i].state === "public"){
         if (myGameArea.frames > arr[i].fromX && myGameArea.frames < arr[i].toX){
-          console.log('the room is public,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between' + arr[i].fromX + 'and' + arr[i].toX)
+          console.log('the room is public,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between ' + arr[i].fromX + ' and ' + arr[i].toX)
           if (crashWith(obstacle)){
             myGameArea.stop
           }
@@ -132,6 +139,7 @@ function updateGameArea() {
     flappyBoobs.gravity(); // Simulate gravity to bring back the player after the jump
     flappyObstacle.newPos();
     flappyObstacle.update();
+    state(gameState.level1); // Not working after 2000, when enters public space, "crashWith is not defined"
     myGameArea.frames += 1;
 };
 
