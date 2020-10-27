@@ -85,6 +85,43 @@ flappyObstacle.speedX -= 1;
 const backgroundImg = document.createElement('img');
 backgroundImg.src = "./img/Lounge-background.png";
 
+
+const gameState = {
+    currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
+    level1: [
+      {space: "bedroom",state: "private", fromX: 0, toX: 1000},
+      {space: "toilets",state: "private", fromX: 1000, toX: 2000},
+      {space: "kitchen",state: "public", fromX: 2000, toX: 3000},
+      {space: "hallway",state: "public", fromX: 3000, toX: 4000},
+      {space: "bathroom",state: "private", fromX: 4000, toX: 5000},
+      {space: "livingroom",state: "public", fromX: 5000, toX: 6000},
+      {space: "backyard",state: "public", fromX: 6000, toX: 7000},
+      {space: "garage",state: "public", fromX: 7000, toX: 8000},
+      {space: "bedroom",state: "private", fromX: 8000, toX: 9000},
+     ],
+    
+  }
+  
+  function state (arr){
+    for (let i = 0 ; i < arr.length; i++){
+      if (arr[i].state === "private"){
+        if (myGameArea.frames > arr[i].fromX && myGameArea.frames < arr[i].toX){
+         console.log('the room is private,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between' + arr[i].fromX + 'and' + arr[i].toX)
+          //TODO IF IN PRIVATE --> WHEN HITTING OBSTACLE ---> SCORE +1
+        }
+      }else if (arr[i].state === "public"){
+        if (myGameArea.frames > arr[i].fromX && myGameArea.frames < arr[i].toX){
+          console.log('the room is public,' + /*flappyBoobs is at ${myGameArea.frames}*/'flappyBoobs is in between' + arr[i].fromX + 'and' + arr[i].toX)
+          if (crashWith(obstacle)){
+            myGameArea.stop
+          }
+        }
+      } 
+    }
+  } 
+  // * state(gameState.level1) 
+
+
 function updateGameArea() {
     myGameArea.clear();
     myGameArea.context.strokeRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height); // Black borders
