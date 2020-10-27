@@ -136,7 +136,7 @@ const gameState = {
    ],
 }
 
-function state (gameState){
+function state (gameState){ // * The meaning of this function is to check wether we are in a public or private based on the frame we are looking for
   let space = gameState.level1.filter(obj => { // * Creating a new array containing only the object which has fromX < frames < toX 
     if ( myGameArea.frames >= obj.fromX && myGameArea.frames <= obj.toX){
       return true; // * The True here is to make the "filter" method work, filter will loop through the array returning the objects which pass True to the test given
