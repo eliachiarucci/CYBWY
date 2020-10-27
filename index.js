@@ -20,12 +20,13 @@ const myGameArea = {
 myGameArea.start();
 
 class Component {
-  constructor(x, y, color, width, height) {
+  constructor(x, y, color, width, height, type) {
     this.width = width;
     this.height = height;
     this.color = color;
     this.x = x;
     this.y = y;
+    this.type = type;
     // speed properties
     this.speedX = 0;
     this.speedY = 0;
@@ -121,36 +122,49 @@ for (let i = 0; i < 1; i++) {
 
 const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
+  currentLevel: "level1",
   level1: [
-    {space: "bedroom", state: "private", fromX: 0, toX: 1000},
-    {space: "toilets", state: "private", fromX: 1001, toX: 2000},
+    {space: "bedroom", state: "private", background:"./img/Lounge-background.png", fromX: 0, toX: 1000},
+    {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 1001, toX: 2000},
     {space: "kitchen", state: "public", fromX: 2001, toX: 3000},
     {space: "hallway", state: "public", fromX: 3001, toX: 4000},
     {space: "bathroom", state: "private", fromX: 4001, toX: 5000},
     {space: "livingroom", state: "public", fromX: 5001, toX: 6000},
     {space: "backyard", state: "public", fromX: 6001, toX: 7000},
     {space: "garage", state: "public", fromX: 7001, toX: 8000},
-    {space: "bedroom", state: "private", fromX: 8001, toX: 9000},
+    {space: "bedroom", state: "private", fromX: 8001, toX: 9000}
    ],
-  
 }
 
 function state (gameState){
-  let space = gameState.level1.filter(obj =>{
+  let space = gameState.level1.filter(obj => { // * Creating a new array containing only the object which has fromX < frames < toX 
     if ( myGameArea.frames >= obj.fromX && myGameArea.frames <= obj.toX){
-      return obj
+      return true; // * The True here is to make the "filter" method work, filter will loop through the array returning the objects which pass True to the test given
     } 
   })
-  return space[0].state;
+  return space[0].state; // * Even if we know the the filter function will return only 1 object, it is still an array containing one object, so we will need to access it at the first index first, and then get the state value
 }
 
-const backgroundImg = document.createElement('img');
-backgroundImg.src = "./img/Lounge-background.png";
+// * Creating an HTML empty element to contain all the IMG elements
+// * We are doing this together with the appenChild method below in order to then have an HTML Collection to loop through
+// ! Can't use a normal Javascript array to containt HTML Elements
+var backgroundArray = document.createDocumentFragment(); 
 
+let currentLevel = gameState.currentLevel // * Accessing the current level
+for (let i = 0; i < gameState[currentLevel].length; i++) { 
+  if ("background" in gameState[currentLevel][i]) { // * Checking if the space in the level has the background key, it should always have one in order to draw the background
+    let backgroundURL = gameState[currentLevel][i].background; // * Getting the url in the background key
+    let image = document.createElement("img"); // * Creating a new IMG element
+    image.src = backgroundURL; // * Assigning the backgroundURL to the src of the newly created IMG element
+    backgroundArray.appendChild(image); // * Appending the IMG element to the HTML empty element in order to have an HTML Collection
+  }
+}
+
+console.log(backgroundArray.childNodes[0]);
 function updateGameArea() {
   myGameArea.clear();
   myGameArea.context.strokeRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
-  myGameArea.context.drawImage(backgroundImg, 0-myGameArea.frames, 0, 1000, 350);
+  updateBackround();
   drawScore();
   updateObstacles();
   flappyBoobs.newPos();
@@ -159,7 +173,15 @@ function updateGameArea() {
   checkCollision();
   myGameArea.frames += 1;
   console.log(myGameArea.score)
+  
 };
+
+function updateBackround() {
+  console.log(backgroundArray.length);
+  for (let i = 0; i < backgroundArray.childNodes.length; i++) { // * Looping through the HTML Collection containing all the IMG elements
+    myGameArea.context.drawImage(backgroundArray.childNodes[i], (i*1000)-myGameArea.frames, 0, 1000, 350); // * Drawing each background IMG elements at i*1000, which is the spacing between spaces 
+  }
+}
 
 function drawScore() {
   myGameArea.context.fillStyle = "black";
@@ -175,17 +197,17 @@ function updateObstacles() {
 }
 
 function checkCollision() {
-  const collisionObj = flappyObstacleArray.filter((obstacle) => {
+  const collisionObj = flappyObstacleArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
     return flappyBoobs.crashWith(obstacle)
   })
 
-  // IF COLLIDING WITH SOMETHING
+  // * IF COLLIDING WITH SOMETHING
   if (collisionObj.length) {
     console.log(collisionObj);
     console.log(state(gameState))
-    if (state(gameState) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
+    if (state(gameState) === "public") { // * IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
       myGameArea.stop();
-    } else if (state(gameState) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
+    } else if (state(gameState) === "private") { // * IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
       flappyObstacleArray.shift();
     }
