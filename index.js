@@ -136,9 +136,10 @@ const gameState = {
    ],
 }
 
-function state (gameState){ // * The meaning of this function is to check wether we are in a public or private based on the frame we are looking for
+
+function state (gameState, frames){ // * The meaning of this function is to check wether we are in a public or private based on the frame we are looking for
   let space = gameState.level1.filter(obj => { // * Creating a new array containing only the object which has fromX < frames < toX 
-    if ( myGameArea.frames >= obj.fromX && myGameArea.frames <= obj.toX){
+    if ( frames >= obj.fromX && frames <= obj.toX) { 
       return true; // * The True here is to make the "filter" method work, filter will loop through the array returning the objects which pass True to the test given
     } 
   })
@@ -205,17 +206,40 @@ function checkCollision() {
   if (collisionObj.length) {
     console.log(collisionObj);
     console.log(state(gameState))
-    if (state(gameState) === "public") { // * IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
+    if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
       myGameArea.stop();
-    } else if (state(gameState) === "private") { // * IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
+    } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
       flappyObstacleArray.shift();
     }
   }
 }
 
+
+// Loop through the locations of the game to create obstacles only in places where it is necessary
+// 1. People are Obstacles in public
+// 2. Boobs and balls are also obstacles in public
+// 3. Boobs and balls are not obstacles
+// Use a for loop to go through px 0 to 9000
+// Leverage the this.type in component class
+for (let frames = 0; frames < array.length; frames++) {
+    const newObstacles = 0;
+    if (state(gameState,) === 'public') {
+        newObstacle.push(new Component(20, height, "green", 0, 0, boobs));
+    } else if (state(gameState) === 'public') {
+        newObstacle.push(new Component(20, height, "green", 0, 0, people))
+    } else { 
+        
+    }
+    
+    
+}
+
+
 document.addEventListener('keydown', (e) => {
   if (e.code = "Space") {
     flappyBoobs.jump();
+    document.getElementById('theme-song').play('/sounds/CYBYWY-theme-song.mp3')
+    document.getElementById('jump').play('/sounds/Mario-jump-Sound.mp3')
   }
 })
