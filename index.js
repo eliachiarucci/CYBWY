@@ -2,11 +2,16 @@ const myGameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
   score: 0,
-  start: function () {
+  initialize: function () {
+    initializeGameArea();
+  },
+  createCanvas: function () {
     this.canvas.width = 600;
     this.canvas.height = 350;
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+  },
+  start: function () {
     this.interval = setInterval(updateGameArea, 20);
   },
   clear: function () {
@@ -17,7 +22,13 @@ const myGameArea = {
   }
 }
 
-myGameArea.start();
+function startGame() {
+  document.getElementById("start-screen").style.display = "none"; 
+  myGameArea.createCanvas();
+  myGameArea.initialize();
+  myGameArea.start();
+  document.getElementById('theme-song').play('./sounds/CYBYWY-theme-song.mp3');
+}
 
 class Component {
   constructor(x, y, color, width, height, type) {
@@ -107,19 +118,6 @@ class Player extends Component {
   }
 }
 
-// New player
-const flappyBoobs = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
-
-// Declare obstacle array
-const flappyObstacleArray = []
-
-//Looping through obstacle creation feeding the obstacle array
-for (let i = 0; i < 1; i++) {
-  const newObstacle = new Component((i+1)*150, myGameArea.canvas.height-20,"blue", 20, 20, "boobs");
-  newObstacle.speedX -= 1;
-  flappyObstacleArray.push(newObstacle);
-}
-
 const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
@@ -136,7 +134,10 @@ const gameState = {
    ],
 }
 
-
+// * Creating an HTML empty element to contain all the IMG elements
+// * We are doing this together with the appenChild method below in order to then have an HTML Collection to loop through
+// ! Can't use a normal Javascript array to containt HTML Elements
+var backgroundArray = document.createDocumentFragment(); 
 function state (gameState, frames){ // * The meaning of this function is to check wether we are in a public or private based on the frame we are looking for
   let space = gameState.level1.filter(obj => { // * Creating a new array containing only the object which has fromX < frames < toX 
     if ( frames >= obj.fromX && frames <= obj.toX) { 
@@ -146,22 +147,32 @@ function state (gameState, frames){ // * The meaning of this function is to chec
   return space[0].state; // * Even if we know the the filter function will return only 1 object, it is still an array containing one object, so we will need to access it at the first index first, and then get the state value
 }
 
-// * Creating an HTML empty element to contain all the IMG elements
-// * We are doing this together with the appenChild method below in order to then have an HTML Collection to loop through
-// ! Can't use a normal Javascript array to containt HTML Elements
-var backgroundArray = document.createDocumentFragment(); 
+const flappyObstacleArray = [];
+let flappyBoobs;
 
-let currentLevel = gameState.currentLevel // * Accessing the current level
-for (let i = 0; i < gameState[currentLevel].length; i++) { 
-  if ("background" in gameState[currentLevel][i]) { // * Checking if the space in the level has the background key, it should always have one in order to draw the background
-    let backgroundURL = gameState[currentLevel][i].background; // * Getting the url in the background key
-    let image = document.createElement("img"); // * Creating a new IMG element
-    image.src = backgroundURL; // * Assigning the backgroundURL to the src of the newly created IMG element
-    backgroundArray.appendChild(image); // * Appending the IMG element to the HTML empty element in order to have an HTML Collection
+function initializeGameArea() {
+  // New player
+  flappyBoobs = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
+  
+  //Looping through obstacle creation feeding the obstacle array
+  for (let i = 0; i < 1; i++) {
+    const newObstacle = new Component((i+1)*150, myGameArea.canvas.height-20,"blue", 20, 20, "boobs");
+    newObstacle.speedX -= 1;
+    flappyObstacleArray.push(newObstacle);
+  }
+  
+  // Declare obstacle array
+  let currentLevel = gameState.currentLevel // * Accessing the current level
+  for (let i = 0; i < gameState[currentLevel].length; i++) { 
+    if ("background" in gameState[currentLevel][i]) { // * Checking if the space in the level has the background key, it should always have one in order to draw the background
+      let backgroundURL = gameState[currentLevel][i].background; // * Getting the url in the background key
+      let image = document.createElement("img"); // * Creating a new IMG element
+      image.src = backgroundURL; // * Assigning the backgroundURL to the src of the newly created IMG element
+      backgroundArray.appendChild(image); // * Appending the IMG element to the HTML empty element in order to have an HTML Collection
+    }
   }
 }
 
-console.log(backgroundArray.childNodes[0]);
 function updateGameArea() {
   myGameArea.clear();
   myGameArea.context.strokeRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
@@ -173,12 +184,10 @@ function updateGameArea() {
   flappyBoobs.gravity();
   checkCollision();
   myGameArea.frames += 1;
-  console.log(myGameArea.score)
-  
+  checkEndLevel();
 };
 
 function updateBackround() {
-  console.log(backgroundArray.length);
   for (let i = 0; i < backgroundArray.childNodes.length; i++) { // * Looping through the HTML Collection containing all the IMG elements
     myGameArea.context.drawImage(backgroundArray.childNodes[i], (i*1000)-myGameArea.frames, 0, 1000, 350); // * Drawing each background IMG elements at i*1000, which is the spacing between spaces 
   }
@@ -201,11 +210,8 @@ function checkCollision() {
   const collisionObj = flappyObstacleArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
     return flappyBoobs.crashWith(obstacle)
   })
-
   // * IF COLLIDING WITH SOMETHING
   if (collisionObj.length) {
-    console.log(collisionObj);
-    console.log(state(gameState))
     if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
       myGameArea.stop();
     } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
@@ -215,6 +221,13 @@ function checkCollision() {
   }
 }
 
+function checkEndLevel() {
+  let levelArray = gameState[gameState.currentLevel];
+  let lastSpace = levelArray[levelArray.length-1];
+  if (myGameArea.frames >= lastSpace.toX) {
+    myGameArea.stop();
+  }
+}
 
 // Loop through the locations of the game to create obstacles only in places where it is necessary
 // 1. People are Obstacles in public
@@ -222,7 +235,8 @@ function checkCollision() {
 // 3. Boobs and balls are not obstacles
 // Use a for loop to go through px 0 to 9000
 // Leverage the this.type in component class
-for (let frames = 0; frames < array.length; frames++) {
+
+/* for (let frames = 0; frames < array.length; frames++) { // ! This for loop was not complete yet, Had to comment it out in order to test new things
     const newObstacles = 0;
     if (state(gameState,) === 'public') {
         newObstacle.push(new Component(20, height, "green", 0, 0, boobs));
@@ -231,15 +245,11 @@ for (let frames = 0; frames < array.length; frames++) {
     } else { 
         
     }
-    
-    
-}
-
+} */
 
 document.addEventListener('keydown', (e) => {
   if (e.code = "Space") {
     flappyBoobs.jump();
-    document.getElementById('theme-song').play('/sounds/CYBYWY-theme-song.mp3')
-    document.getElementById('jump').play('/sounds/Mario-jump-Sound.mp3')
+    document.getElementById('jump').play('./sounds/Mario-jump-Sound.mp3');
   }
 })
