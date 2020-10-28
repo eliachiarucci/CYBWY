@@ -129,6 +129,7 @@ class Player extends Component {
   }
 }
 
+
 const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
