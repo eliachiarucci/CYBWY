@@ -7,12 +7,16 @@ const myGameArea = {
   },
   createCanvas: function () {
     this.canvas.width = 600;
-    this.canvas.height = 350;
+    this.canvas.height = 350; // -85 // 265 // -145 // 205
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
   },
+  deleteCanvas: function () {
+    this.stop();
+    document.body.removeChild(document.getElementsByTagName("canvas")[0]);
+  },
   start: function () {
-    this.interval = setInterval(updateGameArea, 20);
+    this.interval = setInterval(updateGameArea, 15);
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -94,7 +98,13 @@ class Player extends Component {
   }
 
   jump() {
-    if (this.jumps < 2) this.speedY = -5, this.jumps++;
+    if (this.jumps < 2) {
+      this.speedY = -5;
+      this.jumps++;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   gravity() {
@@ -185,6 +195,7 @@ function updateGameArea() {
   checkCollision();
   myGameArea.frames += 1;
   checkEndLevel();
+  console.log(flappyBoobs.y);
 };
 
 function updateBackround() {
@@ -207,16 +218,19 @@ function updateObstacles() {
 }
 
 function checkCollision() {
-  const collisionObj = flappyObstacleArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
+  const collisionObjArr = flappyObstacleArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
     return flappyBoobs.crashWith(obstacle)
   })
   // * IF COLLIDING WITH SOMETHING
-  if (collisionObj.length) {
+  if (collisionObjArr.length) {
     if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
       myGameArea.stop();
     } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
-      flappyObstacleArray.shift();
+      collisionObjArr.forEach((obstacle) => {
+        let obstacleIndex = flappyObstacleArray.indexOf(obstacle); 
+        flappyObstacleArray.splice(obstacleIndex, 1);
+      })
     }
   }
 }
@@ -224,8 +238,11 @@ function checkCollision() {
 function checkEndLevel() {
   let levelArray = gameState[gameState.currentLevel];
   let lastSpace = levelArray[levelArray.length-1];
+  console.log(myGameArea.frames, lastSpace.toX);
   if (myGameArea.frames >= lastSpace.toX) {
     myGameArea.stop();
+    console.log("STOP");
+    document.getElementById("end-screen").style.display = "block";
   }
 }
 
@@ -242,14 +259,16 @@ function checkEndLevel() {
         newObstacle.push(new Component(20, height, "green", 0, 0, boobs));
     } else if (state(gameState) === 'public') {
         newObstacle.push(new Component(20, height, "green", 0, 0, people))
-    } else { 
-        
+    } else {  
     }
 } */
 
 document.addEventListener('keydown', (e) => {
-  if (e.code = "Space") {
-    flappyBoobs.jump();
-    document.getElementById('jump').play('./sounds/Mario-jump-Sound.mp3');
+  if (e.code === "Space") {
+    if(flappyBoobs.jump()) {
+      let audio = document.getElementById('jump');
+      audio.currentTime = 0;
+      audio.play();
+    }
   }
 })
