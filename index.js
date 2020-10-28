@@ -23,10 +23,11 @@ const myGameArea = {
 }
 
 function startGame() {
+  document.getElementById("start-screen").style.display = "none"; 
   myGameArea.createCanvas();
   myGameArea.initialize();
   myGameArea.start();
-  document.getElementById('theme-song').play('/sounds/CYBYWY-theme-song.mp3')
+  document.getElementById('theme-song').play('./sounds/CYBYWY-theme-song.mp3');
 }
 
 class Component {
@@ -183,12 +184,10 @@ function updateGameArea() {
   flappyBoobs.gravity();
   checkCollision();
   myGameArea.frames += 1;
-  console.log(myGameArea.score)
   checkEndLevel();
 };
 
 function updateBackround() {
-  console.log(backgroundArray.length);
   for (let i = 0; i < backgroundArray.childNodes.length; i++) { // * Looping through the HTML Collection containing all the IMG elements
     myGameArea.context.drawImage(backgroundArray.childNodes[i], (i*1000)-myGameArea.frames, 0, 1000, 350); // * Drawing each background IMG elements at i*1000, which is the spacing between spaces 
   }
@@ -251,6 +250,6 @@ function checkEndLevel() {
 document.addEventListener('keydown', (e) => {
   if (e.code = "Space") {
     flappyBoobs.jump();
-    document.getElementById('jump').play('/sounds/Mario-jump-Sound.mp3');
+    document.getElementById('jump').play('./sounds/Mario-jump-Sound.mp3');
   }
 })
