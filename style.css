@@ -1,3 +1,7 @@
 #end-screen {
   display: none;  
 }
+
+canvas {
+  margin: auto;
+}
