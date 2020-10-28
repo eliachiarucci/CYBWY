@@ -54,7 +54,7 @@ class Component {
     this.x = x;
     this.y = y;
     this.type = type;
-    this.image= image;
+    this.image = image;
     // speed properties
     this.speedX = 0;
     this.speedY = 0;
@@ -179,15 +179,15 @@ let player;
 function initializeGameArea() {
   // New player
   let image = document.createElement('img')
-  image.src = '/img/pirates.png'
+  image.src = './img/pirates.png'
   player = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
-  for (let i = 0; i < 45; i++) {
+  for (let i = 0; i < 30; i++) {
   let position = randomPeopleX(i);
   let privatePosition = randomBoobsX(i);
   if (state(gameState, position) === 'public') {
     const injectObstacle = Math.random()  
     if (injectObstacle < 0.5) {
-      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people"));
+      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people", image));
       newPerson.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newPerson);
 
