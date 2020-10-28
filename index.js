@@ -122,7 +122,7 @@ class Player extends Component {
   }
 
   gravity() {
-    let gravity = 0.25;
+    let gravity = 0.27;
     if (this.y + this.speedY < myGameArea.canvas.height - 27) {
       this.speedY += gravity;
     } else {
@@ -155,7 +155,7 @@ const gameState = {
     {space: "bathroom", state: "private", background:"./img/backgrounds/bathroom-background.png", fromX: 4001, toX: 5000},
     {space: "livingroom", state: "public", background:"./img/backgrounds/livingroom-background.png",fromX: 5001, toX: 6000},
     {space: "bedroom2", state: "private", background:"./img/backgrounds/bedroom-background.png", fromX: 6001, toX: 7000},
-    {space: "garage", state: "public", background:"./img/backgrounds/hallway-background.png", fromX: 7001, toX: 7000},
+    {space: "garage", state: "public", background:"./img/backgrounds/hallway-background.png", fromX: 7001, toX: 8000},
     {space: "backyard", state: "public", background:"./img/backgrounds/garden-background.png", fromX: 8001, toX: 9000},
    ],
 }
@@ -165,6 +165,7 @@ const gameState = {
 // ! Can't use a normal Javascript array to containt HTML Elements
 var backgroundArray = document.createDocumentFragment(); 
 function state (gameState, frames){ // * The meaning of this function is to check wether we are in a public or private based on the frame we are looking for
+  frames = parseInt(frames);
   let space = gameState.level1.filter(obj => { // * Creating a new array containing only the object which has fromX < frames < toX 
     if ( frames >= obj.fromX && frames <= obj.toX) { 
       return true; // * The True here is to make the "filter" method work, filter will loop through the array returning the objects which pass True to the test given
@@ -176,19 +177,50 @@ function state (gameState, frames){ // * The meaning of this function is to chec
 let newObstaclesArray = [];
 let player;
 
+// * Difficulties // Still to figure them out
+// * Hard randomPlacement < 0.5 && consequentlyPlaces < 2, x += 50;
+// * Medium randomPlacement < 0.5 && consequentlyPlaces < 2, x += 55;
+// * Easy randomPlacement < 0.5 && consequentlyPlaced < 1, x+= 60;
 function initializeGameArea() {
 
-  let personWatching = document.createElement('img')
-  personWatching.src = './img/enemies/observation.png'
+  let personWatching = document.createElement('img');
+  personWatching.src = './img/enemies/observation.png';
 
   player = new Player(20, myGameArea.canvas.height-27, "red", 27, 27);
-  for (let i = 0; i < 40; i+=1.5) {
+  let level = gameState.currentLevel;
+  let lastSpaceIndex = gameState[level].length-1;
+  console.log(gameState[level][lastSpaceIndex].toX);
+  let consequentlyPlaced = 0;
+
+  for (let x = 0; x < gameState[level][lastSpaceIndex].toX ; x += 50) { // * New random generation obstacle function, More tweakable, do not makes things overlap
+    let randomPlacement = Math.random();
+    if (randomPlacement < 0.5 && consequentlyPlaced < 2) {
+      console.log(consequentlyPlaced);
+      if (state(gameState, x) === 'public') {
+        const injectObstacle = Math.random()  
+        if (injectObstacle < 0.5) {
+          spawnPersonWatching(x, personWatching);
+        } else {
+          spawnNewCollectible(x);
+        } 
+      } else  if (state(gameState, x) === 'private') { 
+        spawnNewCollectible(x);
+      }
+      consequentlyPlaced++;
+      continue;
+    }
+    consequentlyPlaced = 0;
+    x += 75;
+  }
+
+  /*for (let i = 0; i < 45; i+=2) {
   let position = randomPeopleX(i);
   let privatePosition = randomBoobsX(i);
+  console.log(position, privatePosition);
   if (state(gameState, position) === 'public') {
     const injectObstacle = Math.random()  
     if (injectObstacle < 0.5) {
-      const newPerson = (new Component(position, 315, "purple", 27, 27, "people", personWatching));
+      const newPerson = (new Component(position, 320, "purple", 30, 30, "people", personWatching));
       newPerson.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newPerson);
     } else {
@@ -201,15 +233,7 @@ function initializeGameArea() {
     newCollectible.speedX -= myGameArea.objectsSpeed;
     newObstaclesArray.push(newCollectible);
   }
-}
-
-
- /*  for (let i = 0; i < 40; i++) {
-    let position = randomBoobsX(i);
-    const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boobs"));
-    newBoob.speedX-= 1;
-    newObstaclesArray.push(newBoob);
-  }  */
+}*/
 
   // Declare obstacle array
   let currentLevel = gameState.currentLevel // * Accessing the current level
@@ -311,35 +335,24 @@ function randomCollectible() {
   return collectibleImg;
 }
 
-const randomBoobs = () => {
+
+function spawnPersonWatching(x, personWatching) {
+  const newPerson = new Component(x, 320, "purple", 30, 30, "people", personWatching);
+  newPerson.speedX -= myGameArea.objectsSpeed;
+  newObstaclesArray.push(newPerson);
+}
+
+function spawnNewCollectible(x) {
+  const newCollectible = (new Component(x, randomHeight(), "green", 45, 27, "boob", randomCollectible()));
+  newCollectible.speedX -= myGameArea.objectsSpeed;
+  newObstaclesArray.push(newCollectible);
+}
+
+const randomHeight = () => {
   let maxHeight =  200;
   let minHeight = 270;
   let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
   return heightRange;
-}
-
-const randomPeople = () => {
-  let maxHeight =  230;
-  let minHeight = 330;
-  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-  return heightRange;
-}
-
-const randomBoobsX = (i) => {
-  //Looping through obstacle creation feeding the obstacle array
-  let maxSpacing = 200;
-  let minSpacing = 100;
-  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
-  const position = (i+1)*randomSpacing;
-  return position
-}
-
-const randomPeopleX = (i) => {
-  let maxSpacing = 200;
-  let minSpacing = 100;
-  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
-  const position = (i+1)*randomSpacing;
-  return position
 }
 
 /* Archived code
@@ -380,6 +393,35 @@ for (let frames = 0; frames < array.length; frames++) { // ! This for loop was n
     }
 } 
 
-       
+    const randomBoobs = () => {
+  let maxHeight =  200;
+  let minHeight = 270;
+  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+  return heightRange;
+}
+
+const randomPeople = () => {
+  let maxHeight =  230;
+  let minHeight = 330;
+  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+  return heightRange;
+}
+
+const randomBoobsX = (i) => {
+  //Looping through obstacle creation feeding the obstacle array
+  let maxSpacing = 200;
+  let minSpacing = 100;
+  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
+  const position = (i+1)*randomSpacing;
+  return position;
+}
+
+const randomPeopleX = (i) => {
+  let maxSpacing = 200;
+  let minSpacing = 100;
+  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
+  const position = (i+1)*randomSpacing;
+  return position;
+}   
 
 */
