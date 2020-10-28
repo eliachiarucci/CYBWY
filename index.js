@@ -2,6 +2,7 @@ const myGameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
   score: 0,
+  objectsSpeed: 5,
   initialize: function () {
     initializeGameArea();
   },
@@ -11,12 +12,13 @@ const myGameArea = {
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
   },
-  hideCanvas: function () {
+  lose: function () {
     this.stop();
-    document.getElementsByTagName("canvas")[0].style.display = "none";
+    //document.getElementsByTagName("canvas")[0].style.display = "none";
+    document.getElementById("end-screen").style.display = "block";
   },
   start: function () {
-    this.interval = setInterval(updateGameArea, 15);
+    this.interval = setInterval(updateGameArea, 17);
     document.getElementsByTagName("canvas")[0].style.display = "block";
   },
   clear: function () {
@@ -25,6 +27,15 @@ const myGameArea = {
   stop: function () {
     clearInterval(this.interval);
   }
+}
+
+function replayGame() {
+  document.getElementById("end-screen").style.display = "none"; 
+  myGameArea.frames = 0;
+  myGameArea.score = 0;
+  newObstaclesArray = [];
+  myGameArea.initialize();
+  myGameArea.start();
 }
 
 function startGame() {
@@ -109,7 +120,7 @@ class Player extends Component {
   }
 
   gravity() {
-    let gravity = 0.2;
+    let gravity = 0.15;
     if (this.y + this.speedY < myGameArea.canvas.height - 20) {
       this.speedY += gravity;
     } else {
@@ -158,30 +169,30 @@ function state (gameState, frames){ // * The meaning of this function is to chec
   return space[0].state; // * Even if we know the the filter function will return only 1 object, it is still an array containing one object, so we will need to access it at the first index first, and then get the state value
 }
 
-const newObstaclesArray = [];
+let newObstaclesArray = [];
 let player;
 
 function initializeGameArea() {
   // New player
   player = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 45; i++) {
   let position = randomPeopleX(i);
   let privatePosition = randomBoobsX(i);
   if (state(gameState, position) === 'public') {
     const injectObstacle = Math.random()  
     if (injectObstacle < 0.5) {
       const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people"));
-      newPerson.speedX-= 1;
+      newPerson.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newPerson);
     } else {
       const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boob"));
-      newBoob.speedX-= 1;
+      newBoob.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newBoob);
     } 
   } else  if (state(gameState, privatePosition) === 'private') {
-    console.log(randomBoobsX(i))  
+    //console.log(randomBoobsX(i))  
     const newBoob = (new Component(privatePosition, randomBoobs(),  "red", 20, 20, "boob"));
-      newBoob.speedX-= 1;
+      newBoob.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newBoob);
   }
 }
@@ -216,7 +227,7 @@ function updateGameArea() {
   player.update();
   player.gravity();
   checkCollision();  
-  myGameArea.frames += 1;
+  myGameArea.frames += myGameArea.objectsSpeed;
   checkEndLevel();
   // console.log(player.y);
 };
@@ -248,7 +259,7 @@ function checkCollision() {
   // * IF COLLIDING WITH SOMETHING
   if (collisionObjArr.length) {
     if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
-      myGameArea.stop();
+      myGameArea.lose();
     } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
       collisionObjArr.forEach((obstacle) => {
@@ -264,7 +275,7 @@ function checkCollision() {
 function checkEndLevel() {
   let levelArray = gameState[gameState.currentLevel];
   let lastSpace = levelArray[levelArray.length-1];
-  console.log(myGameArea.frames, lastSpace.toX);
+  //console.log(myGameArea.frames, lastSpace.toX);
   if (myGameArea.frames >= lastSpace.toX) {
     myGameArea.stop();
     console.log("STOP");
