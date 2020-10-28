@@ -36,13 +36,14 @@ function startGame() {
 }
 
 class Component {
-  constructor(x, y, color, width, height, type) {
+  constructor(x, y, color, width, height, type, image) {
     this.width = width;
     this.height = height;
     this.color = color;
     this.x = x;
     this.y = y;
     this.type = type;
+    this.image= image;
     // speed properties
     this.speedX = 0;
     this.speedY = 0;
@@ -58,6 +59,7 @@ class Component {
     const ctx = myGameArea.context;
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
+    // replace with draw img
   }
 
   left() {
@@ -130,19 +132,20 @@ class Player extends Component {
 }
 
 
+
 const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
   level1: [
-    {space: "bedroom", state: "public", background:"./img/Lounge-background.png", fromX: 0, toX: 1000},
-    {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 1001, toX: 2000},
-    {space: "kitchen", state: "public", fromX: 2001, toX: 3000},
-    {space: "hallway", state: "public", fromX: 3001, toX: 4000},
-    {space: "bathroom", state: "private", fromX: 4001, toX: 5000},
-    {space: "livingroom", state: "public", fromX: 5001, toX: 6000},
-    {space: "backyard", state: "public", fromX: 6001, toX: 7000},
-    {space: "garage", state: "public", fromX: 7001, toX: 8000},
-    {space: "bedroom", state: "private", fromX: 8001, toX: 9000}
+    {space: "hallway", state: "public", background:"./img/hallway-background.png",fromX: 0, toX: 1000},
+    {space: "bedroom", state: "public", background:"./img/Lounge-background.png", fromX: 1001, toX: 2000},
+    {space: "kitchen", state: "public", background:"./img/kitchen-background.png", fromX: 2001, toX: 3000},
+    {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 3001, toX: 4000},
+    {space: "bathroom", state: "private", background:"./img/bathroom-background.png", fromX: 4001, toX: 5000},
+    {space: "livingroom", state: "public", background:"./img/livingroom-background..png",fromX: 5001, toX: 6000},
+    {space: "bedroom2", state: "private", background:"./img/bedroom2-background.png", fromX: 6001, toX: 7000}
+    {space: "garage", state: "public", background:"./img/garage-background.png", fromX: 7001, toX: 7000},
+    {space: "backyard", state: "public", background:"./img/backyard-background.png", fromX: 8001, toX: 9000},
    ],
 }
 
