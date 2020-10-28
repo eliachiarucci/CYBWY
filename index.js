@@ -58,12 +58,12 @@ class Component {
   update() {
     const ctx = myGameArea.context;
     ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    // replace with draw img
+    // ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
   }
 
   left() {
-    return this.x;
+    return this.x;2
   }
   right() {
     return this.x + this.width;
@@ -142,10 +142,10 @@ const gameState = {
     {space: "kitchen", state: "public", background:"./img/kitchen-background.png", fromX: 2001, toX: 3000},
     {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 3001, toX: 4000},
     {space: "bathroom", state: "private", background:"./img/bathroom-background.png", fromX: 4001, toX: 5000},
-    {space: "livingroom", state: "public", background:"./img/livingroom-background..png",fromX: 5001, toX: 6000},
-    {space: "bedroom2", state: "private", background:"./img/bedroom2-background.png", fromX: 6001, toX: 7000}
-    {space: "garage", state: "public", background:"./img/garage-background.png", fromX: 7001, toX: 7000},
-    {space: "backyard", state: "public", background:"./img/backyard-background.png", fromX: 8001, toX: 9000},
+    {space: "livingroom", state: "public", background:"./img/livingroom-background.png",fromX: 5001, toX: 6000},
+    {space: "bedroom2", state: "private", background:"./img/bedroom-background.png", fromX: 6001, toX: 7000},
+    {space: "garage", state: "public", background:"./img/hallway-background.png", fromX: 7001, toX: 7000},
+    {space: "backyard", state: "public", background:"./img/garden-background.png", fromX: 8001, toX: 9000},
    ],
 }
 
@@ -167,6 +167,8 @@ let player;
 
 function initializeGameArea() {
   // New player
+  let image = document.createElement('img')
+  image.src = '/img/pirates.png'
   player = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
   for (let i = 0; i < 20; i++) {
   let position = randomPeopleX(i);
@@ -174,17 +176,18 @@ function initializeGameArea() {
   if (state(gameState, position) === 'public') {
     const injectObstacle = Math.random()  
     if (injectObstacle < 0.5) {
-      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people"));
+      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people", image));
       newPerson.speedX-= 1;
       newObstaclesArray.push(newPerson);
+
     } else {
-      const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boob"));
+      const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boob", image));
       newBoob.speedX-= 1;
       newObstaclesArray.push(newBoob);
     } 
   } else  if (state(gameState, privatePosition) === 'private') {
     console.log(randomBoobsX(i))  
-    const newBoob = (new Component(privatePosition, randomBoobs(),  "red", 20, 20, "boob"));
+    const newBoob = (new Component(privatePosition, randomBoobs(),  "red", 20, 20, "boob", image));
       newBoob.speedX-= 1;
       newObstaclesArray.push(newBoob);
   }
