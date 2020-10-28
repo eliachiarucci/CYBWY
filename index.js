@@ -6,7 +6,7 @@ const myGameArea = {
     initializeGameArea();
   },
   createCanvas: function () {
-    this.canvas.width = 600;
+    this.canvas.width = 1000;
     this.canvas.height = 350; // -85 // 265 // -145 // 205
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -99,7 +99,7 @@ class Player extends Component {
 
   jump() {
     if (this.jumps < 2) {
-      this.speedY = -5;
+      this.speedY = -6;
       this.jumps++;
       return true;
     } else {
@@ -132,7 +132,7 @@ const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
   level1: [
-    {space: "bedroom", state: "private", background:"./img/Lounge-background.png", fromX: 0, toX: 1000},
+    {space: "bedroom", state: "public", background:"./img/Lounge-background.png", fromX: 0, toX: 1000},
     {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 1001, toX: 2000},
     {space: "kitchen", state: "public", fromX: 2001, toX: 3000},
     {space: "hallway", state: "public", fromX: 3001, toX: 4000},
@@ -157,20 +157,42 @@ function state (gameState, frames){ // * The meaning of this function is to chec
   return space[0].state; // * Even if we know the the filter function will return only 1 object, it is still an array containing one object, so we will need to access it at the first index first, and then get the state value
 }
 
-const flappyObstacleArray = [];
-let flappyBoobs;
+const newObstaclesArray = [];
+let player;
 
 function initializeGameArea() {
   // New player
-  flappyBoobs = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
-  
-  //Looping through obstacle creation feeding the obstacle array
-  for (let i = 0; i < 1; i++) {
-    const newObstacle = new Component((i+1)*150, myGameArea.canvas.height-20,"blue", 20, 20, "boobs");
-    newObstacle.speedX -= 1;
-    flappyObstacleArray.push(newObstacle);
+  player = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
+  for (let i = 0; i < 20; i++) {
+  let position = randomPeopleX(i);
+  let privatePosition = randomBoobsX(i);
+  if (state(gameState, position) === 'public') {
+    const injectObstacle = Math.random()  
+    if (injectObstacle < 0.5) {
+      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people"));
+      newPerson.speedX-= 1;
+      newObstaclesArray.push(newPerson);
+    } else {
+      const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boob"));
+      newBoob.speedX-= 1;
+      newObstaclesArray.push(newBoob);
+    } 
+  } else  if (state(gameState, privatePosition) === 'private') {
+    console.log(randomBoobsX(i))  
+    const newBoob = (new Component(privatePosition, randomBoobs(),  "red", 20, 20, "boob"));
+      newBoob.speedX-= 1;
+      newObstaclesArray.push(newBoob);
   }
-  
+}
+
+
+ /*  for (let i = 0; i < 40; i++) {
+    let position = randomBoobsX(i);
+    const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boobs"));
+    newBoob.speedX-= 1;
+    newObstaclesArray.push(newBoob);
+  }  */
+
   // Declare obstacle array
   let currentLevel = gameState.currentLevel // * Accessing the current level
   for (let i = 0; i < gameState[currentLevel].length; i++) { 
@@ -189,13 +211,13 @@ function updateGameArea() {
   updateBackround();
   drawScore();
   updateObstacles();
-  flappyBoobs.newPos();
-  flappyBoobs.update();
-  flappyBoobs.gravity();
-  checkCollision();
+  player.newPos();
+  player.update();
+  player.gravity();
+  checkCollision();  
   myGameArea.frames += 1;
   checkEndLevel();
-  console.log(flappyBoobs.y);
+  // console.log(player.y);
 };
 
 function updateBackround() {
@@ -211,15 +233,16 @@ function drawScore() {
 }
 
 function updateObstacles() {
-  for (let i = 0; i < flappyObstacleArray.length; i++) {
-    flappyObstacleArray[i].newPos();
-    flappyObstacleArray[i].update();
+  for (let i = 0; i < newObstaclesArray.length; i++) {
+    newObstaclesArray[i].newPos();
+    newObstaclesArray[i].update();
   }
 }
 
+
 function checkCollision() {
-  const collisionObjArr = flappyObstacleArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
-    return flappyBoobs.crashWith(obstacle)
+  const collisionObjArr = newObstaclesArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
+    return player.crashWith(obstacle)
   })
   // * IF COLLIDING WITH SOMETHING
   if (collisionObjArr.length) {
@@ -228,12 +251,14 @@ function checkCollision() {
     } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
       collisionObjArr.forEach((obstacle) => {
-        let obstacleIndex = flappyObstacleArray.indexOf(obstacle); 
-        flappyObstacleArray.splice(obstacleIndex, 1);
+        let obstacleIndex = newObstaclesArray.indexOf(obstacle); 
+        newObstaclesArray.splice(obstacleIndex, 1);
+        // console.log(myGameArea.score)
       })
     }
   }
 }
+
 
 function checkEndLevel() {
   let levelArray = gameState[gameState.currentLevel];
@@ -246,14 +271,77 @@ function checkEndLevel() {
   }
 }
 
-// Loop through the locations of the game to create obstacles only in places where it is necessary
-// 1. People are Obstacles in public
-// 2. Boobs and balls are also obstacles in public
-// 3. Boobs and balls are not obstacles
-// Use a for loop to go through px 0 to 9000
-// Leverage the this.type in component class
 
-/* for (let frames = 0; frames < array.length; frames++) { // ! This for loop was not complete yet, Had to comment it out in order to test new things
+document.addEventListener('keydown', (e) => {
+  if (e.code === "Space") {
+    if(player.jump()) {
+      let audio = document.getElementById('jump');
+      audio.currentTime = 0;
+      audio.play();
+    }
+  }
+})
+
+const randomBoobs = () => {
+  let maxHeight =  200;
+  let minHeight = 270;
+  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+  return heightRange;
+}
+
+const randomPeople = () => {
+  let maxHeight =  230;
+  let minHeight = 330;
+  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+  return heightRange;
+}
+
+const randomBoobsX = (i) => {
+  //Looping through obstacle creation feeding the obstacle array
+  let maxSpacing = 200;
+  let minSpacing = 100;
+  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
+  const position = (i+1)*randomSpacing;
+  return position
+}
+
+const randomPeopleX = (i) => {
+  let maxSpacing = 200;
+  let minSpacing = 100;
+  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
+  const position = (i+1)*randomSpacing;
+  return position
+}
+
+/* Archived code
+
+function checkCollision() {
+  const collisionObjArr = newObstaclesArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
+    return player.crashWith(obstacle)
+  })
+  // * IF COLLIDING WITH SOMETHING
+  if (collisionObjArr.length) {
+    if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
+      myGameArea.stop();
+    } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
+      myGameArea.score++;
+      collisionObjArr.forEach((obstacle) => {
+        let obstacleIndex = newObstaclesArray.indexOf(obstacle); 
+        newObstaclesArray.splice(obstacleIndex, 1);
+      })
+    }
+  }
+}
+
+
+Loop through the locations of the game to create obstacles only in places where it is necessary
+1. People are Obstacles in public
+2. Boobs and balls are also obstacles in public
+3. Boobs and balls are not obstacles
+Use a for loop to go through px 0 to 9000
+Leverage the this.type in component class
+
+for (let frames = 0; frames < array.length; frames++) { // ! This for loop was not complete yet, Had to comment it out in order to test new things
     const newObstacles = 0;
     if (state(gameState,) === 'public') {
         newObstacle.push(new Component(20, height, "green", 0, 0, boobs));
@@ -261,14 +349,8 @@ function checkEndLevel() {
         newObstacle.push(new Component(20, height, "green", 0, 0, people))
     } else {  
     }
-} */
+} 
 
-document.addEventListener('keydown', (e) => {
-  if (e.code === "Space") {
-    if(flappyBoobs.jump()) {
-      let audio = document.getElementById('jump');
-      audio.currentTime = 0;
-      audio.play();
-    }
-  }
-})
+       
+
+*/
