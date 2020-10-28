@@ -195,7 +195,7 @@ function initializeGameArea() {
   for (let x = 0; x < gameState[level][lastSpaceIndex].toX ; x += 50) { // * New random generation obstacle function, More tweakable, do not makes things overlap
     let randomPlacement = Math.random();
     if (randomPlacement < 0.5 && consequentlyPlaced < 2) {
-      console.log(consequentlyPlaced);
+      consequentlyPlaced++;
       if (state(gameState, x) === 'public') {
         const injectObstacle = Math.random()  
         if (injectObstacle < 0.5) {
@@ -206,11 +206,10 @@ function initializeGameArea() {
       } else  if (state(gameState, x) === 'private') { 
         spawnNewCollectible(x);
       }
-      consequentlyPlaced++;
-      continue;
+    } else {
+      consequentlyPlaced = 0;
+      x += 75;
     }
-    consequentlyPlaced = 0;
-    x += 75;
   }
 
   /*for (let i = 0; i < 45; i+=2) {
