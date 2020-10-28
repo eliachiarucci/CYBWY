@@ -102,7 +102,7 @@ class Player extends Component {
     super(x, y, color, width, height);
     this.jumps = 0;
     this.img = document.createElement('img');
-    this.img.src = "./img/hands-point-right.png";
+    this.img.src = "./img/player/hands-point-right.png";
   }
 
   update() {
@@ -113,7 +113,7 @@ class Player extends Component {
 
   jump() {
     if (this.jumps < 2) {
-      this.speedY = -6;
+      this.speedY = -6.5;
       this.jumps++;
       return true;
     } else {
@@ -122,13 +122,13 @@ class Player extends Component {
   }
 
   gravity() {
-    let gravity = 0.15;
-    if (this.y + this.speedY < myGameArea.canvas.height - 20) {
+    let gravity = 0.25;
+    if (this.y + this.speedY < myGameArea.canvas.height - 27) {
       this.speedY += gravity;
     } else {
       this.speedY = 0;
       this.jumps = 0;
-      this.y = myGameArea.canvas.height - 20;
+      this.y = myGameArea.canvas.height - 27;
     }
   }
 
@@ -148,15 +148,15 @@ const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
   level1: [
-    {space: "hallway", state: "public", background:"./img/hallway-background.png",fromX: 0, toX: 1000},
-    {space: "bedroom", state: "public", background:"./img/Lounge-background.png", fromX: 1001, toX: 2000},
-    {space: "kitchen", state: "public", background:"./img/kitchen-background.png", fromX: 2001, toX: 3000},
-    {space: "toilets", state: "private", background:"./img/bedroom-background.png", fromX: 3001, toX: 4000},
-    {space: "bathroom", state: "private", background:"./img/bathroom-background.png", fromX: 4001, toX: 5000},
-    {space: "livingroom", state: "public", background:"./img/livingroom-background.png",fromX: 5001, toX: 6000},
-    {space: "bedroom2", state: "private", background:"./img/bedroom-background.png", fromX: 6001, toX: 7000},
-    {space: "garage", state: "public", background:"./img/hallway-background.png", fromX: 7001, toX: 7000},
-    {space: "backyard", state: "public", background:"./img/garden-background.png", fromX: 8001, toX: 9000},
+    {space: "hallway", state: "private", background:"./img/backgrounds/hallway-background.png",fromX: 0, toX: 1000},
+    {space: "bedroom", state: "public", background:"./img/backgrounds/Lounge-background.png", fromX: 1001, toX: 2000},
+    {space: "kitchen", state: "public", background:"./img/backgrounds/kitchen-background.png", fromX: 2001, toX: 3000},
+    {space: "toilets", state: "private", background:"./img/backgrounds/bedroom-background.png", fromX: 3001, toX: 4000},
+    {space: "bathroom", state: "private", background:"./img/backgrounds/bathroom-background.png", fromX: 4001, toX: 5000},
+    {space: "livingroom", state: "public", background:"./img/backgrounds/livingroom-background.png",fromX: 5001, toX: 6000},
+    {space: "bedroom2", state: "private", background:"./img/backgrounds/bedroom-background.png", fromX: 6001, toX: 7000},
+    {space: "garage", state: "public", background:"./img/backgrounds/hallway-background.png", fromX: 7001, toX: 7000},
+    {space: "backyard", state: "public", background:"./img/backgrounds/garden-background.png", fromX: 8001, toX: 9000},
    ],
 }
 
@@ -177,30 +177,29 @@ let newObstaclesArray = [];
 let player;
 
 function initializeGameArea() {
-  // New player
-  let image = document.createElement('img')
-  image.src = './img/pirates.png'
-  player = new Player(20, myGameArea.canvas.height-20, "red", 20, 20);
-  for (let i = 0; i < 30; i++) {
+
+  let personWatching = document.createElement('img')
+  personWatching.src = './img/enemies/observation.png'
+
+  player = new Player(20, myGameArea.canvas.height-27, "red", 27, 27);
+  for (let i = 0; i < 40; i+=1.5) {
   let position = randomPeopleX(i);
   let privatePosition = randomBoobsX(i);
   if (state(gameState, position) === 'public') {
     const injectObstacle = Math.random()  
     if (injectObstacle < 0.5) {
-      const newPerson = (new Component(position, randomPeople(), "purple", 20, 20, "people", image));
+      const newPerson = (new Component(position, 315, "purple", 27, 27, "people", personWatching));
       newPerson.speedX -= myGameArea.objectsSpeed;
       newObstaclesArray.push(newPerson);
-
     } else {
-      const newBoob = (new Component(position, randomBoobs(), "green", 20, 20, "boob", image));
-      newBoob.speedX -= myGameArea.objectsSpeed;
-      newObstaclesArray.push(newBoob);
+      const newCollectible = (new Component(position, randomBoobs(), "green", 45, 27, "boob", randomCollectible()));
+      newCollectible.speedX -= myGameArea.objectsSpeed;
+      newObstaclesArray.push(newCollectible);
     } 
-  } else  if (state(gameState, privatePosition) === 'private') {
-    console.log(randomBoobsX(i))  
-    const newBoob = (new Component(privatePosition, randomBoobs(),  "red", 20, 20, "boob", image));
-      newBoob.speedX -= myGameArea.objectsSpeed;
-      newObstaclesArray.push(newBoob);
+  } else  if (state(gameState, privatePosition) === 'private') { 
+    const newCollectible = (new Component(privatePosition, randomBoobs(),  "red", 45, 27, "boob", randomCollectible()));
+    newCollectible.speedX -= myGameArea.objectsSpeed;
+    newObstaclesArray.push(newCollectible);
   }
 }
 
@@ -300,6 +299,17 @@ document.addEventListener('keydown', (e) => {
     }
   }
 })
+
+function randomCollectible() {
+  let random = Math.random();
+  let collectibleImg = document.createElement('img');
+  if (random < 0.5) {
+    collectibleImg.src = './img/collectibles/small-boobs.png'
+  } else {
+    collectibleImg.src = './img/collectibles/small-balls.png'
+  }
+  return collectibleImg;
+}
 
 const randomBoobs = () => {
   let maxHeight =  200;
