@@ -10,12 +10,6 @@
 
   <body>
     <script src="index.js"></script>
-    <div id="score-container"></div>
-    <div>
-      <label for="name">Enter your name:</label>
-      <input id="name" type="text" placeholder="name">
-      <button onClick="insertScore()">Push score</button>
-    </div>
     <div class="container-fluid">
       <div class="row">
         <div id="start-screen">
@@ -44,6 +38,7 @@
       <h1 class="title mx-auto Game-over">
         GAME OVER
       </h1>
+
       <p class="title mx-auto">Scroll down for tutorials</p>
       <button class="btn btn-primary btn-lg btn-block" onClick="replayGame()">
         Play again
@@ -80,7 +75,7 @@
         </div>
       </div>
 
-      <h2 id="breast" class="title mx-auto">Testicular Cancer - How to check yourself</h2>
+      <h2 id="breast" class="title mx-auto balls-1">Testicular Cancer - How to check yourself</h2>
       <div class="row text-center">
         <div class="col-6 text-center breasts">
           <img class="balls-1"  src="./img/step-one-testi.png" alt="Check-yourself-breast-cancer">
@@ -112,10 +107,23 @@
                 larger than the other.</p>
             </div>
           </div>
-        </div>    
+        </div>   
         
-        <footer>  
-
+        <div class="score-container container-fluid"> 
+          <div id="score-container"></div>
+          <div>
+            <label class="text-center" for="name">Enter your name:</label>
+            <input id="name" type="text" placeholder="name">
+            <button onClick="insertScore()">Push score</button>
+          </div>
+        </div>
+        
+        <footer class="container-fluid footer-">  
+          <div>
+            <p>Elia Chiarucci</p>
+            <p>Yann Quintin</p>
+            <p>Maya Ausset</p>
+          </div>
         </footer>
         
     </div>
