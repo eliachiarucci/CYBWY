@@ -2,7 +2,7 @@ const myGameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
   score: 0,
-  objectsSpeed: 5,
+  objectsSpeed: 3,
   initialize: function () {
     initializeGameArea();
   },
@@ -123,21 +123,21 @@ class Player extends Component {
 
   gravity() {
     let gravity = 0.27;
-    if (this.y + this.speedY < myGameArea.canvas.height - 27) {
+    if (this.y + this.speedY < myGameArea.canvas.height - 28) {
       this.speedY += gravity;
     } else {
       this.speedY = 0;
       this.jumps = 0;
-      this.y = myGameArea.canvas.height - 27;
+      this.y = myGameArea.canvas.height - 28;
     }
   }
 
   crashWith(obstacle) {
     return !(
-      this.bottom() < obstacle.top() ||
-      this.top() > obstacle.bottom() ||
+      this.bottom()-2 < obstacle.top() ||
+      this.top()-2 > obstacle.bottom() ||
       this.right()-10 < obstacle.left() ||
-      this.left() > obstacle.right()
+      this.left()-2 > obstacle.right()
     );
   }
 }
@@ -186,7 +186,7 @@ function initializeGameArea() {
   let personWatching = document.createElement('img');
   personWatching.src = './img/enemies/observation.png';
 
-  player = new Player(20, myGameArea.canvas.height-27, "red", 27, 27);
+  player = new Player(20, myGameArea.canvas.height-28, "red", 28, 28);
   let level = gameState.currentLevel;
   let lastSpaceIndex = gameState[level].length-1;
   console.log(gameState[level][lastSpaceIndex].toX);
@@ -336,7 +336,7 @@ function randomCollectible() {
 
 
 function spawnPersonWatching(x, personWatching) {
-  const newPerson = new Component(x, 320, "purple", 30, 30, "people", personWatching);
+  const newPerson = new Component(x, 315, "purple", 35, 35, "people", personWatching);
   newPerson.speedX -= myGameArea.objectsSpeed;
   newObstaclesArray.push(newPerson);
 }
