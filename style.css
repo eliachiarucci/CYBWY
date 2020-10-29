@@ -5,3 +5,62 @@
 canvas {
   margin: auto;
 }
+*{
+    background-color: #EDCCF8 ;
+}
+.container-fluid{
+    text-align: center;
+}
+img{
+    width: 40px;
+}
+.btn{
+    background-color: #EBAFEE;
+    border: RGB(153, 41, 158);
+}
+.btn:hover{
+    background-color: #601679;
+}
+.title{
+    padding: 10px;
+    color: #BC7BD2;
+    text-align: center;
+}
+.row{
+    padding: 30px;
+    align: center;
+}
+.game-explanation{
+    display: flex;
+    flex-direction: column;
+    color: darkorchid;
+    padding: 60px 60px;
+}
+.step {
+    border-style: dashed;
+}
+.breasts{
+    padding: 20px;
+    color: darkorchid;
+}
+.breasts-1{
+    width: 200px;
+    padding-bottom: 30px;
+    border-radius: 100%;
+}
+.balls-1{
+    width: 200px;
+    padding-bottom: 30px;
+    border-radius: 50%;
+}
+.footer-{
+    background-color:#BC7BD2;
+    color: plum;
+}
+.containerfooter{
+    padding: 10px;
+}
+.containerfooter p{
+    font-size: 1rem;
+    font-weight: bold;
+}
