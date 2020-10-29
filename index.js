@@ -16,6 +16,7 @@ const myGameArea = {
     this.stop();
     //document.getElementsByTagName("canvas")[0].style.display = "none";
     document.getElementById("end-screen").style.display = "block";
+    document.getElementById('dead').play('./sounds/yoshi-dead.mp3');
   },
   start: function () {
     this.interval = setInterval(updateGameArea, 17);
