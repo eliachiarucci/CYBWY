@@ -33,7 +33,7 @@ img{
     position: relative;
     animation-name: example1;
     animation-duration: 5s;
-    animation-iteration-count: 50;
+    animation-iteration-count: 150;
     animation-fill-mode: alternate;
 }
 
@@ -49,10 +49,9 @@ img{
     position: relative;
     animation-name: example2;
     animation-duration: 5s;
-    animation-iteration-count: 50;
+    animation-iteration-count: 150;
     animation-fill-mode: alternate;
 }
-
 @keyframes example2 {
   from {left: 1500px;}
   to {left: -300px }
