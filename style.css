@@ -1,12 +1,13 @@
 #end-screen {
   display: none;  
 }
+body{
+    background-color: #EDCCF8 ;
+    margin-top: 20px;
+}
 
 canvas {
   margin: auto;
-}
-*{
-    background-color: #EDCCF8 ;
 }
 .container-fluid{
     text-align: center;
