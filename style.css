@@ -3,7 +3,7 @@
 }
 body{
     background-color: #EDCCF8 ;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 body {
@@ -41,6 +41,14 @@ img{
     color: darkorchid;
     padding: 60px 60px;
 }
+.score-container{
+    color: darkorchid;
+    margin-bottom: 20px;
+}
+.score-container li{
+    list-style: none;
+    padding: 5px;
+}
 .step {
     border-style: dashed;
 }
@@ -54,18 +62,23 @@ img{
     border-radius: 100%;
 }
 .balls-1{
-    width: 200px;
+    width: 400px;
     padding-bottom: 30px;
     border-radius: 50%;
 }
+.balls-1 h2{
+    border-style: dotted;
+}
+
 .footer-{
-    background-color:#BC7BD2;
-    color: plum;
-}
-.containerfooter{
+    color: #EDCCF8;
+    background-color: blueviolet;
+    margin: 0 auto;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
 }
-.containerfooter p{
-    font-size: 1rem;
-    font-weight: bold;
+.footer- p{
+    padding: 10px;
+    text-align: center;
 }
