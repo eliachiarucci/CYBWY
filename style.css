@@ -17,7 +17,7 @@ canvas {
     text-align: center;
 }
 img{
-    width: 40px;
+    width: 60px;
 }
 .btn{
     background-color: #EBAFEE;
@@ -26,10 +26,44 @@ img{
 .btn:hover{
     background-color: #601679;
 }
+.animated-logo1{
+    width: 100px;
+    height: 100px;
+    background:#EDCCF8;
+    position: relative;
+    animation-name: example1;
+    animation-duration: 5s;
+    animation-iteration-count: 50;
+    animation-fill-mode: alternate;
+}
+
+@keyframes example1 {
+  from {left: -300px;}
+  to {left: 1500px;}
+}
+.animated-logo2{
+    padding: 30px;       
+    width: 100px;
+    height: 100px;
+    background:#EDCCF8;
+    position: relative;
+    animation-name: example2;
+    animation-duration: 5s;
+    animation-iteration-count: 50;
+    animation-fill-mode: alternate;
+}
+
+@keyframes example2 {
+  from {left: 1500px;}
+  to {left: -300px }
+}
 .title{
     padding: 10px;
     color: #BC7BD2;
     text-align: center;
+}
+.first-title{
+    text-shadow: 5px 2px purple;
 }
 .row{
     padding: 30px;
@@ -40,6 +74,11 @@ img{
     flex-direction: column;
     color: darkorchid;
     padding: 60px 60px;
+    border-style: outset;
+    border-width: 25px;
+    border-color: #EBAFEE;
+    padding: 20px;
+    margin: 20px;
 }
 .score-container{
     color: darkorchid;
