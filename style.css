@@ -2,6 +2,10 @@
   display: none;  
 }
 
+body {
+    background-color: #EDCCF8;
+}
+
 canvas {
   margin: auto;
 }

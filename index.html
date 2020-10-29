@@ -10,6 +10,12 @@
 
   <body>
     <script src="index.js"></script>
+    <div id="score-container"></div>
+    <div>
+      <label for="name">Enter your name:</label>
+      <input id="name" type="text" placeholder="name">
+      <button onClick="insertScore()">Push score</button>
+    </div>
     <div class="container-fluid">
       <div class="row">
         <div id="start-screen">
@@ -127,23 +133,57 @@
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-
+  
   <!-- TODO: Add SDKs for Firebase products that you want to use
       https://firebase.google.com/docs/web/setup#available-libraries -->
-
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
   <script>
     // Your web app's Firebase configuration
-    var firebaseConfig = {
-      apiKey: "AIzaSyCkcx_wNXghr4UzsriP1eHvN-Gp9DyKD0w",
-      authDomain: "cybywy-586b5.firebaseapp.com",
-      databaseURL: "https://cybywy-586b5.firebaseio.com",
-      projectId: "cybywy-586b5",
-      storageBucket: "cybywy-586b5.appspot.com",
-      messagingSenderId: "988196806937",
-      appId: "1:988196806937:web:a95b19501312931ff1a588"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+  var firebaseConfig = {
+    apiKey: "AIzaSyCkcx_wNXghr4UzsriP1eHvN-Gp9DyKD0w",
+    authDomain: "cybywy-586b5.firebaseapp.com",
+    databaseURL: "https://cybywy-586b5.firebaseio.com",
+    projectId: "cybywy-586b5",
+    storageBucket: "cybywy-586b5.appspot.com",
+    messagingSenderId: "988196806937",
+    appId: "1:988196806937:web:a95b19501312931ff1a588"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+    // Initialize Cloud Firestore through Firebase
+  var db = firebase.firestore();
+
+  function getScores() {
+    let ol = document.createElement("ol");
+    let data = db.collection("scores").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        let li = document.createElement("li");
+        li.innerHTML = "Score: " + doc.data().score + " - " + "Name: " + doc.data().name;
+        ol.appendChild(li);
+      });
+      console.log(ol);
+      document.getElementById("score-container").appendChild(ol);
+    });
+  }
+
+  getScores();
+  function insertScore() {
+    let name = document.getElementById('name').value;
+    let score = myGameArea.score;
+    db.collection("scores").add({
+      name,
+      score
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+  }
+
+  
   </script>
 
   </body>
