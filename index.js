@@ -37,6 +37,8 @@ function replayGame() {
   newObstaclesArray = [];
   myGameArea.initialize();
   myGameArea.start();
+  let inputForm = document.getElementById('score-form');
+  inputForm.style.display = "block";
 }
 
 function startGame() {

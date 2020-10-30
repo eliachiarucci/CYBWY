@@ -113,9 +113,10 @@
           </div>
         </div>   
         
-        <div class="score-container container-fluid"> 
+        <div class="score-container container-fluid">
+          <div>TOP 10: </div>
           <div id="score-container"></div>
-          <div>
+          <div id="score-form">
             <label class="text-center" for="name">Enter your name:</label>
             <input id="name" type="text" placeholder="name">
             <button onClick="insertScore()">Push score</button>
@@ -170,18 +171,35 @@
   function getScores() {
     let ol = document.createElement("ol");
     let data = db.collection("scores").get().then((querySnapshot) => {
+      let scoreArray = [];
       querySnapshot.forEach((doc) => {
-        let li = document.createElement("li");
-        li.innerHTML = "Score: " + doc.data().score + " - " + "Name: " + doc.data().name;
-        ol.appendChild(li);
+        let scoreObject = {
+          score: doc.data().score,
+          name: doc.data().name
+        }
+        scoreArray.push(scoreObject);
       });
+      scoreArray.sort((a,b) => b.score - a.score);
+      scoreArray.splice(10);
+      scoreArray.forEach((scoreObjet) => {
+        let li = document.createElement("li");
+        li.innerHTML = "Score: " + scoreObjet.score + " - " + "Name: " + scoreObjet.name;
+        ol.appendChild(li);
+      })
       console.log(ol);
-      document.getElementById("score-container").appendChild(ol);
-    });
-  }
+      let scoreContainer = document.getElementById("score-container");
+      if(scoreContainer.childNodes.length) {
+        scoreContainer.innerHTML = "";
+      };
+        scoreContainer.appendChild(ol);
+  })
+}
 
   getScores();
+
   function insertScore() {
+    let inputForm = document.getElementById('score-form');
+    inputForm.style.display = "none";
     let name = document.getElementById('name').value;
     let score = myGameArea.score;
     db.collection("scores").add({
@@ -190,6 +208,7 @@
     })
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
+        getScores();
     })
     .catch(function(error) {
         console.error("Error adding document: ", error);
