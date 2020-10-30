@@ -170,7 +170,7 @@ const gameState = {
   level1: [
     {space: "Bedroom1", state: "private", background:"./img/backgrounds/Bedroom1-Background.png",fromX: 0, toX: 1000},
     {space: "Office", state: "public", background:"./img/backgrounds/Office-Background.png", fromX: 1001, toX: 2000},
-    {space: "Garden", state: "public", background:"./img/backgrounds/garden-Background.png", fromX: 2001, toX: 3000},
+    {space: "Garden", state: "public", background:"./img/backgrounds/garden-background.png", fromX: 2001, toX: 3000},
     {space: "toilets", state: "private", background:"./img/backgrounds/Toilets-Background.png", fromX: 3001, toX: 4000},
     {space: "Supermarket", state: "public", background:"./img/backgrounds/Supermarket-Background.png", fromX: 4001, toX: 5000},
     {space: "Bedroom2", state: "private", background:"./img/backgrounds/Bedroom2-background.png", fromX: 5001, toX: 6000},
