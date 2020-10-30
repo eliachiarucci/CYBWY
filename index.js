@@ -147,7 +147,7 @@ class Player extends Component {
 
 
 
-const gameState = {
+/* const gameState = {
   currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
   level1: [
@@ -162,7 +162,21 @@ const gameState = {
     {space: "Garden", state: "public", background:"./img/backgrounds/Garden-Background.png", fromX: 8001, toX: 9000},
     {space: "Supermarket", state: "public", background:"./img/backgrounds/Supermarket-Background.png", fromX: 9001, toX: 10000},
     {space: "Classroom", state: "public", background:"./img/backgrounds/Classroom-Background.png", fromX: 10001, toX: 11000},
-    {space: "Bathroom2", state: "private", background:"./img/backgrounds/Bathroom2-Background.png", fromX: 11001, toX: 12000},
+    {space: "Bathroom2", state: "public", background:"./img/backgrounds/Bathroom2-Background.png", fromX: 11001, toX: 12000},
+   ],
+} */
+
+const gameState = {
+  currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
+  currentLevel: "level1",
+  level1: [
+    {space: "Bedroom1", state: "private", background:"./img/backgrounds/Bedroom1-Background.png",fromX: 0, toX: 1000},
+    {space: "Office", state: "public", background:"./img/backgrounds/Office-Background.png", fromX: 1001, toX: 2000},
+    {space: "Garden", state: "public", background:"./img/backgrounds/Garden-Background.png", fromX: 2001, toX: 3000},
+    {space: "toilets", state: "private", background:"./img/backgrounds/Toilets-Background.png", fromX: 3001, toX: 4000},
+    {space: "Supermarket", state: "public", background:"./img/backgrounds/Supermarket-Background.png", fromX: 4001, toX: 5000},
+    {space: "Bedroom2", state: "private", background:"./img/backgrounds/Bedroom2-Background.png", fromX: 5001, toX: 6000},
+    {space: "Classroom", state: "public", background:"./img/backgrounds/Classroom-Background.png", fromX: 6001, toX: 7000},
    ],
 }
 
@@ -195,9 +209,7 @@ function initializeGameArea() {
   player = new Player(20, myGameArea.canvas.height-28, "red", 28, 28);
   let level = gameState.currentLevel;
   let lastSpaceIndex = gameState[level].length-1;
-  console.log(gameState[level][lastSpaceIndex].toX);
   let consequentlyPlaced = 0;
-
   for (let x = 0; x < gameState[level][lastSpaceIndex].toX ; x += 50) { // * New random generation obstacle function, More tweakable, do not makes things overlap
     let randomPlacement = Math.random();
     if (randomPlacement < 0.5 && consequentlyPlaced < 2) {
@@ -294,6 +306,10 @@ function checkCollision() {
   // * IF COLLIDING WITH SOMETHING
   if (collisionObjArr.length) {
     if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
+      let endScreenTitle = document.getElementById("end-screen-title");
+      let endScreenMessage = document.getElementById("end-screen-message");
+      endScreenTitle.innerHTML = "GAME OVER!"
+      endScreenMessage.innerHTML = "Even if you didn't reach the end of the level, your health is more important! <br> Scroll down to see how to check yourself!"
       myGameArea.lose();
     } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
       myGameArea.score++;
@@ -314,6 +330,10 @@ function checkEndLevel() {
   if (myGameArea.frames >= lastSpace.toX) {
     myGameArea.stop();
     console.log("STOP");
+    let endScreenTitle = document.getElementById("end-screen-title");
+    let endScreenMessage = document.getElementById("end-screen-message");
+    endScreenTitle.innerHTML = "CONGRATULATION!";
+    endScreenMessage.innerHTML = "You made it to the end! <br> Scroll down to see how to check yourself!";
     document.getElementById("end-screen").style.display = "block";
   }
 }
