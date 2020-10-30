@@ -42,8 +42,8 @@ img{
 }
 
 @keyframes example1 {
-  from {left: -300px;}
-  to {left: 1500px;}
+  from {left: 900px;}
+  to {left: 300px;}
 }
 .animated-logo2{
     padding: 30px;       
@@ -57,8 +57,8 @@ img{
     animation-fill-mode: alternate;
 }
 @keyframes example2 {
-  from {left: 1500px;}
-  to {left: -300px }
+  from {left: 300px;}
+  to {left: 900px }
 }
 .title{
     padding: 10px;
