@@ -71,6 +71,7 @@ img{
 .row{
     padding: 30px;
     align: center;
+    justify-content: center;
 }
 .game-explanation{
     display: flex;
@@ -82,6 +83,7 @@ img{
     border-color: #EBAFEE;
     padding: 20px;
     margin: 20px;
+    box-sizing: content-box;
 }
 .score-container{
     color: darkorchid;
@@ -93,6 +95,11 @@ img{
 }
 .step {
     border-style: dashed;
+}
+.step-4{
+    width: 400px;
+    padding-bottom: 30px;
+    border-radius: 20%;
 }
 .breasts{
     padding: 20px;
