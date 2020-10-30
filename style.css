@@ -1,6 +1,7 @@
 #end-screen {
   display: none;  
 }
+
 body{
     background-color: #EDCCF8 ;
     margin-top: 40px;
@@ -15,6 +16,9 @@ canvas {
 }
 .container-fluid{
     text-align: center;
+}
+.bold{
+    font-weight: bold;
 }
 img{
     width: 60px;
@@ -93,6 +97,17 @@ img{
 .breasts{
     padding: 20px;
     color: darkorchid;
+    border: 5px solid purple;
+    margin: 20px 20px 30px 20px;
+    border-radius: 20px;
+    box-shadow: 15px 10px;
+    box-sizing: content-box;
+}
+.breasts h3{
+    border: 5px solid purple;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 5px 5px;
 }
 .breasts-1{
     width: 200px;
@@ -100,12 +115,19 @@ img{
     border-radius: 100%;
 }
 .balls-1{
-    width: 400px;
+    width: 300px;
     padding-bottom: 30px;
-    border-radius: 50%;
+    border-radius: 20%;
 }
-.balls-1 h2{
+.balls-Title{
+    margin-top: 40px;
+    font-size: 3rem;
+    color: rebeccapurple;
     border-style: dotted;
+}
+.balls-p{
+    padding: 10px 50px;
+    text-align: justify;
 }
 
 .footer-{
