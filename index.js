@@ -162,7 +162,7 @@ const gameState = {
     {space: "Garden", state: "public", background:"./img/backgrounds/Garden-Background.png", fromX: 8001, toX: 9000},
     {space: "Supermarket", state: "public", background:"./img/backgrounds/Supermarket-Background.png", fromX: 9001, toX: 10000},
     {space: "Classroom", state: "public", background:"./img/backgrounds/Classroom-Background.png", fromX: 10001, toX: 11000},
-    {space: "Bathroom2", state: "public", background:"./img/backgrounds/Bathroom2-Background.png", fromX: 11001, toX: 12000},
+    {space: "Bathroom2", state: "private", background:"./img/backgrounds/Bathroom2-Background.png", fromX: 11001, toX: 12000},
    ],
 }
 
