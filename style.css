@@ -82,6 +82,7 @@ img{
     border-color: #EBAFEE;
     padding: 20px;
     margin: 20px;
+    box-sizing: border-box;
 }
 .score-container{
     color: darkorchid;
