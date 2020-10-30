@@ -8,13 +8,12 @@ const myGameArea = {
   },
   createCanvas: function () {
     this.canvas.width = 1000;
-    this.canvas.height = 350; // -85 // 265 // -145 // 205
+    this.canvas.height = 350;
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
   },
   lose: function () {
     this.stop();
-    //document.getElementsByTagName("canvas")[0].style.display = "none";
     document.getElementById("end-screen").style.display = "block";
     document.getElementById('dead').play('./sounds/yoshi-dead.mp3');
   },
@@ -72,7 +71,6 @@ class Component {
   update() {
     const ctx = myGameArea.context;
     ctx.fillStyle = this.color;
-    // ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
   }
 
@@ -167,7 +165,7 @@ class Player extends Component {
 } */
 
 const gameState = {
-  currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
+  //currentState: "menu", // If it is Menu, game is stopped and menu appears, if it is gaming, game resume and frames updates
   currentLevel: "level1",
   level1: [
     {space: "Bedroom1", state: "private", background:"./img/backgrounds/Bedroom1-Background.png",fromX: 0, toX: 1000},
@@ -230,28 +228,6 @@ function initializeGameArea() {
     }
   }
 
-  /*for (let i = 0; i < 45; i+=2) {
-  let position = randomPeopleX(i);
-  let privatePosition = randomBoobsX(i);
-  console.log(position, privatePosition);
-  if (state(gameState, position) === 'public') {
-    const injectObstacle = Math.random()  
-    if (injectObstacle < 0.5) {
-      const newPerson = (new Component(position, 320, "purple", 30, 30, "people", personWatching));
-      newPerson.speedX -= myGameArea.objectsSpeed;
-      newObstaclesArray.push(newPerson);
-    } else {
-      const newCollectible = (new Component(position, randomBoobs(), "green", 45, 27, "boob", randomCollectible()));
-      newCollectible.speedX -= myGameArea.objectsSpeed;
-      newObstaclesArray.push(newCollectible);
-    } 
-  } else  if (state(gameState, privatePosition) === 'private') { 
-    const newCollectible = (new Component(privatePosition, randomBoobs(),  "red", 45, 27, "boob", randomCollectible()));
-    newCollectible.speedX -= myGameArea.objectsSpeed;
-    newObstaclesArray.push(newCollectible);
-  }
-}*/
-
   // Declare obstacle array
   let currentLevel = gameState.currentLevel // * Accessing the current level
   for (let i = 0; i < gameState[currentLevel].length; i++) { 
@@ -276,7 +252,6 @@ function updateGameArea() {
   checkCollision();  
   myGameArea.frames += myGameArea.objectsSpeed;
   checkEndLevel();
-  // console.log(player.y);
 };
 
 function updateBackround() {
@@ -316,7 +291,6 @@ function checkCollision() {
       collisionObjArr.forEach((obstacle) => {
         let obstacleIndex = newObstaclesArray.indexOf(obstacle); 
         newObstaclesArray.splice(obstacleIndex, 1);
-        // console.log(myGameArea.score)
       })
     }
   }
@@ -326,10 +300,8 @@ function checkCollision() {
 function checkEndLevel() {
   let levelArray = gameState[gameState.currentLevel];
   let lastSpace = levelArray[levelArray.length-1];
-  //console.log(myGameArea.frames, lastSpace.toX);
   if (myGameArea.frames >= lastSpace.toX) {
     myGameArea.stop();
-    console.log("STOP");
     let endScreenTitle = document.getElementById("end-screen-title");
     let endScreenMessage = document.getElementById("end-screen-message");
     endScreenTitle.innerHTML = "CONGRATULATION!";
@@ -379,74 +351,3 @@ const randomHeight = () => {
   let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
   return heightRange;
 }
-
-/* Archived code
-
-function checkCollision() {
-  const collisionObjArr = newObstaclesArray.filter((obstacle) => { // * Creating a new array containing only the objects which returns true from the crashWith method
-    return player.crashWith(obstacle)
-  })
-  // * IF COLLIDING WITH SOMETHING
-  if (collisionObjArr.length) {
-    if (state(gameState, myGameArea.frames) === "public") { //IF COLLIDING WITH SOMETHING WHILE IN PUBLIC
-      myGameArea.stop();
-    } else if (state(gameState, myGameArea.frames) === "private") { //IF COLLIDING WITH SOMETHING WHILE IN PRIVATE
-      myGameArea.score++;
-      collisionObjArr.forEach((obstacle) => {
-        let obstacleIndex = newObstaclesArray.indexOf(obstacle); 
-        newObstaclesArray.splice(obstacleIndex, 1);
-      })
-    }
-  }
-}
-
-
-Loop through the locations of the game to create obstacles only in places where it is necessary
-1. People are Obstacles in public
-2. Boobs and balls are also obstacles in public
-3. Boobs and balls are not obstacles
-Use a for loop to go through px 0 to 9000
-Leverage the this.type in component class
-
-for (let frames = 0; frames < array.length; frames++) { // ! This for loop was not complete yet, Had to comment it out in order to test new things
-    const newObstacles = 0;
-    if (state(gameState,) === 'public') {
-        newObstacle.push(new Component(20, height, "green", 0, 0, boobs));
-    } else if (state(gameState) === 'public') {
-        newObstacle.push(new Component(20, height, "green", 0, 0, people))
-    } else {  
-    }
-} 
-
-    const randomBoobs = () => {
-  let maxHeight =  200;
-  let minHeight = 270;
-  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-  return heightRange;
-}
-
-const randomPeople = () => {
-  let maxHeight =  230;
-  let minHeight = 330;
-  let heightRange = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-  return heightRange;
-}
-
-const randomBoobsX = (i) => {
-  //Looping through obstacle creation feeding the obstacle array
-  let maxSpacing = 200;
-  let minSpacing = 100;
-  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
-  const position = (i+1)*randomSpacing;
-  return position;
-}
-
-const randomPeopleX = (i) => {
-  let maxSpacing = 200;
-  let minSpacing = 100;
-  let randomSpacing = Math.floor(Math.random() * (maxSpacing - minSpacing + 1) + minSpacing);
-  const position = (i+1)*randomSpacing;
-  return position;
-}   
-
-*/
